@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adgas Sensor Data</title>
+<style>
+html {
+	/* -webkit-transition: background-color 1s; */
+	/* transition: background-color 1s;*/
+	
+}
+
+html, body {
+	/* For the loading indicator to be vertically centered ensure */
+	/* the html and body elements take up the full viewport */
+	min-height: 100%;
+}
+
+html.loading {
+	/* Replace #333 with the background-color of your choice */
+	/* Replace loading.gif with the loading image of your choice */
+	background: url('views/loading.gif') no-repeat 50% 50%;
+
+	/* Ensures that the transition only runs in one direction */
+	/*-webkit-transition: background-color 0;*/
+	/*transition: background-color 0;*/
+}
+
+body {
+	-webkit-transition: opacity 1s ease-in;
+	transition: opacity 1s ease-in;
+}
+
+html.loading body {
+	/* Make the contents of the body opaque during loading */
+	opacity: 0.5;
+	/* Ensures that the transition only runs in one direction */
+	-webkit-transition: opacity 0.5;
+	transition: opacity 0.5;
+}
+</style>
+</head>
+<body ng-app="AngularChartExample">
+
+	<div ng-controller="MainCtrl">
+
+
+
+		<form name="myForm">
+
+			<div class="page-header" style="margin: 2px; margin-left: 15px">
+				<h4>Adgas Sensor Data</h4>
+				<table width="100%">
+				<tr>
+				<td colspan="3">  <label>
+    <input type="radio" ng-model="db"  value ="timeseries" ng-click="setDB('timeseries')" ng-checked="true">
+    Timeseries
+  </label>
+  <label>
+    <input type="radio" ng-model="db"  value ="postgres" ng-click="setDB('postgres')">
+    Postgres
+  </label><br/></td>
+				</tr>
+					<tr>
+						<td><table>
+								<tr>
+									<td style="font-size: 9pt">Tag Name</td>
+									<td style="width: 20px" align="center">:</td>
+									<td><select ng-model="selectedName"
+										ng-options="x for x in names" class="form-control"
+										style="width: 250px; height: 127px; font-size: 8pt"
+										 name = "selectedName" ng-maxlength="8"
+										multiple required>
+											<option value="">---Please select Tag Name---</option>
+									</select> </td>
+									<td align="left"><span
+										ng-show="myForm.selectedName.$error.required"
+										style="color: red">&nbsp;&nbsp;*</span></td>
+								</tr>
+								<tr>
+								<td></td><td></td>
+								<td colspan="2">
+								<span ng-show="myForm.selectedName.$error.maxLimit"
+										style="color: red; font-size: 8pt">You can select
+											maximum 8 tag names.</span>
+								</td></tr>
+							</table></td>
+						<td align="right" valign="top" style="width: 43%"><table>
+								<tr>
+									<td colspan="4"></td>
+								</tr>
+
+								<tr>
+									<td colspan="4" style="height: 5px"></td>
+								</tr>
+
+
+								<tr>
+									<td colspan="4" style="height: 5px"></td>
+								</tr>
+								<tr>
+									<td style="font-size: 9pt">Duration</td>
+									<td style="width: 20px" align="center">:</td>
+									<td><select ng-model="selectedTime" class="form-control"
+										style="width: 250px; height: 27px; font-size: 8pt">
+											<option value="">---Please select Time---</option>   
+											<option value="5mi-ago">5mi-ago</option>
+											<option value="10mi-ago">10mi-ago</option>             
+											<option value="15mi-ago">15mi-ago</option>             
+											<option value="30mi-ago">30mi-ago</option>             
+											<option value="45mi-ago">45mi-ago</option>  
+											<option value="60mi-ago">60mi-ago</option> 
+											<option value="75mi-ago">75mi-ago</option> 
+											<option value="90mi-ago">90mi-ago</option>        
+											            
+											<option value="1h-ago">1h-ago</option>
+											<option value="2h-ago">2h-ago</option>
+											<option value="3h-ago">3h-ago</option>
+											<option value="4h-ago">4h-ago</option>             
+											<option value="5h-ago">5h-ago</option>             
+											<option value="10h-ago">10h-ago</option>  
+											<option value="11h-ago">11h-ago</option>             
+											<option value="1d-ago">1d-ago</option>  
+											<option value="2d-ago">2d-ago</option>             
+											<option value="5d-ago">5d-ago</option>             
+											<option value="10d-ago">10d-ago</option>             
+											<option value="1w-ago">1w-ago</option>             
+											<option value="2w-ago">2w-ago</option>             
+											<option value="3w-ago">3w-ago</option>             
+											<option value="1mm-ago">1mm-ago</option>             
+											<option value="2mm-ago">2mm-ago</option>             
+											<option value="3mm-ago">3mm-ago</option>             
+											<option value="5mm-ago">5mm-ago</option>             
+											<option value="6mm-ago">6mm-ago</option>             
+											<option value="8mm-ago">8mm-ago</option>             
+											<option value="1y-ago">1y-ago</option>
+
+									</select></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4" style="height: 2px"></td>
+								</tr>
+								<tr>
+									<td style="font-size: 9pt">No. of points</td>
+									<td style="width: 20px" align="center">:</td>
+									<td><select ng-model="selectedLimit" class="form-control"
+										style="width: 250px; height: 27px; font-size: 8pt">
+											<option value="">---Please select Limit---</option>
+											<option value="25">25</option>
+											<option value="50">50</option>
+											<option value="100">100</option>
+											<option value="200">200</option>
+											<option value="250">250</option>
+											<option value="300">300</option>
+									</select></td>
+									<td align="right">&nbsp;&nbsp;
+										<button type="button" class="btn btn-info"
+											ng-click="GetData(selectedName,selectedTime,selectedLimit)"
+											ng-model="selectedFetch" ng-disabled="!myForm.$valid"
+											style="height: 29px; font-size: 8pt">Fetch data</button>
+									</td>
+
+								</tr>
+
+
+								<tr style="height: 10px">
+									<td colspan="4"></td>
+								</tr>
+
+
+							</table></td>
+						<td style="width: 1%"></td>
+					</tr>
+
+				</table>
+			</div>
+
+			<div id="container" style="width: 100%; height: 100%"></div>
+		</form>
+	</div>
+
+
+
+</body>
+</html>

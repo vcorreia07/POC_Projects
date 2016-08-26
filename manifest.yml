@@ -1,0 +1,6 @@
+#inherit: base-manifest.yml 
+applications:
+  - name: adgas-sensordata-MultilineGraph-display-app
+    buildpack: java_buildpack
+    path: target/PredixSeed_01-0.0.1-SNAPSHOT.war
+    memory: 256M
